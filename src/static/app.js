@@ -15,18 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Populate activities list
       Object.entries(activities).forEach(([name, details]) => {
-        const activityCard = document.createElement("div");
-        activityCard.className = "activity-card";
-
-        const spotsLeft = details.max_participants - details.participants.length;
-
-        activityCard.innerHTML = `
-          <h4>${name}</h4>
-          <p>${details.description}</p>
-          <p><strong>Schedule:</strong> ${details.schedule}</p>
-          <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
-        `;
-
+        const activityCard = createActivityCard(name, details);
         activitiesList.appendChild(activityCard);
 
         // Add option to select dropdown
@@ -39,6 +28,48 @@ document.addEventListener("DOMContentLoaded", () => {
       activitiesList.innerHTML = "<p>Failed to load activities. Please try again later.</p>";
       console.error("Error fetching activities:", error);
     }
+  }
+
+  function createActivityCard(name, details) {
+    const card = document.createElement("div");
+    card.className = "activity-card";
+
+    const title = document.createElement("h4");
+    title.textContent = name;
+    card.appendChild(title);
+
+    const description = document.createElement("p");
+    description.textContent = details.description;
+    card.appendChild(description);
+
+    const schedule = document.createElement("p");
+    schedule.innerHTML = `<strong>Schedule:</strong> ${details.schedule}`;
+    card.appendChild(schedule);
+
+    const spotsLeft = details.max_participants - details.participants.length;
+    const availability = document.createElement("p");
+    availability.innerHTML = `<strong>Availability:</strong> ${spotsLeft} spots left`;
+    card.appendChild(availability);
+
+    // Add participants section
+    const participantsSection = document.createElement("div");
+    participantsSection.className = "participants";
+
+    const participantsTitle = document.createElement("h5");
+    participantsTitle.textContent = "Participants:";
+    participantsSection.appendChild(participantsTitle);
+
+    const participantsList = document.createElement("ul");
+    details.participants.forEach((participant) => {
+      const listItem = document.createElement("li");
+      listItem.textContent = participant;
+      participantsList.appendChild(listItem);
+    });
+    participantsSection.appendChild(participantsList);
+
+    card.appendChild(participantsSection);
+
+    return card;
   }
 
   // Handle form submission
